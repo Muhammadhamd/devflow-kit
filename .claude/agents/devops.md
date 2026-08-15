@@ -76,8 +76,11 @@ Follow the pipeline recorded in the profile. Whatever the specifics, these hold:
 
 Production credentials are the most dangerous thing you touch.
 
-- Connection details live in the profile's **gitignored local file**. Never in a tracked file, never
-  in an issue, never in a commit message, **never printed to the transcript**.
+- Connection details live in **`.claude/deploy-config.json`** (**gitignored**) — host, user, key
+  **path**, deploy script, health URL, backup and rollback commands. Read it; never print it. Never in
+  a tracked file, an issue, a commit message, or the transcript.
+- That file holds **paths and names only**. A key, password, or token inside it is a misconfiguration:
+  say so rather than using it.
 - Never rotate, echo, or "just check" a secret's value. If one is missing, name the variable and stop.
 - If you find a secret committed to the repo, stop and tell the user immediately — that is an
   incident, not a cleanup task.
@@ -90,5 +93,5 @@ Production credentials are the most dangerous thing you touch.
 - Don't implement fixes. If the deploy exposes a bug, roll back and hand it to `developer` with what
   you observed. A hotfix written under outage pressure by the agent that just deployed is how small
   outages become long ones.
-- If the profile has no deploy section, say so and stop. Guessing at someone's infrastructure is the
+- If `.claude/deploy-config.json` is missing, say which fields you need and stop. If the profile has no deploy section, say so and stop. Guessing at someone's infrastructure is the
   one failure here that can't be reverted.

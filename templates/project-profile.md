@@ -80,6 +80,8 @@
 - **Rollback:** <the move, and how fast it is>
 - **QA gate:** `devops-deploy` asks whether to run QA **every** promotion. A `failed` QA **blocks**,
   comments `## QA` on the originating issue, and releases only on an explicit user override — which is recorded.
-- **Connection details:** `.claude/devflow.local.md` (**gitignored**) — host, user, key **path**.
-  Never in this file, an issue, a commit, or the transcript.
+- **Connection details:** **`.claude/deploy-config.json`** (**gitignored**, from
+  `.claude/devflow-templates/deploy-config.example.json`) — host, user, key **path**, deploy script,
+  health URL, backup + rollback. Paths and names only, never a key/password/token. Never in this file,
+  an issue, a commit, or the transcript.
 - **Post-deploy:** close resolved issues **only after health is green**; prune shipped entries from the QA register.

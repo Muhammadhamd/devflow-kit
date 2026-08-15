@@ -66,10 +66,12 @@ One short batched question set, detected values pre-filled as the recommended op
    router should then not offer `devops-deploy`.
 10. **Production branch + how a release reaches users** — the pipeline steps, the health endpoint to
     verify, and the rollback move.
-11. **Connection details** — host, user, key path, registry, whatever the target needs.
-    > These go in **`.claude/devflow.local.md`**, which you create **and gitignore**. Never in the
-    > profile, an issue, a commit, or the transcript. Ask for a **key path**, never a key. If the
-    > user pastes a secret, tell them it's now in the transcript and should be rotated.
+11. **Connection details** — host, user, key path, deploy script, health URL, backup + rollback.
+    > These go in **`.claude/deploy-config.json`**, copied from
+    > `.claude/devflow-templates/deploy-config.example.json`, which you create **and gitignore**.
+    > It stores **paths and names only**. Ask for a **key path**, never a key. Never the profile, an
+    > issue, a commit, or the transcript. If the user pastes a secret, tell them it is now in the
+    > transcript and should be rotated.
 
 Keep it to what changes behavior; state assumptions for the rest.
 
@@ -116,14 +118,16 @@ Only what the user approved in step 3.
   `process.env.<the names from step 3>` — **never a literal**.
 - **Credentials scaffold:** create `.env.qa.example` listing the variable **names** with empty
   values, and ensure `.env.qa` is gitignored. The user fills the real file; you never see it.
-- **`.claude/devflow.local.md`** (if the deploy role was accepted): connection details, **gitignored**.
+- **`.claude/deploy-config.json`** (if the deploy role was accepted): copy
+  `.claude/devflow-templates/deploy-config.example.json`, fill what the user gave you, **gitignore it**.
   Verify the ignore actually matches — a `.gitignore` entry that doesn't match is worse than none,
-  because it looks handled.
+  because it looks handled. (A file whose own header claims it is gitignored, while it isn't, is the
+  exact trap this check exists for.)
 
 ```bash
 grep -qxF '.env.qa' .gitignore || echo '.env.qa' >> .gitignore
-grep -qxF '.claude/devflow.local.md' .gitignore || echo '.claude/devflow.local.md' >> .gitignore
-git check-ignore -v .env.qa .claude/devflow.local.md    # prove it, don't assume it
+grep -qxF '.claude/deploy-config.json' .gitignore || echo '.claude/deploy-config.json' >> .gitignore
+git check-ignore -v .env.qa .claude/deploy-config.json    # prove it, don't assume it
 ```
 
 ## 7. Knowledge base + initial issues (PROPOSE, then file on confirm)

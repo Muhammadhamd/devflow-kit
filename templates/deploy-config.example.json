@@ -1,0 +1,50 @@
+{
+  "_comment": [
+    "Connection details for the `devops` agent. Copy to .claude/deploy-config.json and fill in.",
+    "THIS FILE IS GITIGNORED. Never commit it, never paste its contents into a chat or an issue.",
+    "Store PATHS and NAMES here — never a password, key material, or a token.",
+    "Secrets themselves belong on the target host or in a secret manager."
+  ],
+
+  "target": {
+    "kind": "ssh",
+    "host": "<hostname-or-ip>",
+    "user": "<ssh-user>",
+    "port": 22,
+    "identityFile": "~/.ssh/<key-name>",
+    "_note": "identityFile is a PATH to a key. Never inline the key itself."
+  },
+
+  "deploy": {
+    "productionBranch": "main",
+    "baseBranch": "dev",
+    "script": "<path to the deploy script on the target, or the command used locally>",
+    "workingDir": "<path to the checkout on the target>",
+    "processManager": "<pm2 | systemd | docker compose | none>",
+    "processes": ["<web-process-name>", "<worker-process-name>"]
+  },
+
+  "health": {
+    "url": "<https://host/health — the endpoint that proves it actually works>",
+    "expectStatus": 200,
+    "timeoutSeconds": 120,
+    "_note": "A started process is not a working service. If the app has a worker/queue, add its check here too — a green web process with a dead worker is a silently broken deploy."
+  },
+
+  "backup": {
+    "command": "<the command that backs up the database>",
+    "destination": "<where backups land>",
+    "_note": "Required before any schema or data mutation. Confirm the backup exists before proceeding."
+  },
+
+  "rollback": {
+    "command": "<the move that reverts a bad deploy>",
+    "_note": "Roll back first, diagnose after."
+  },
+
+  "neverOverwrite": [
+    "<tables/collections a data sync must never touch — billing, credentials, subscriptions>"
+  ],
+
+  "secretsLocation": "<where the real secrets live on the target — a path or a manager name, NOT the values>"
+}

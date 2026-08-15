@@ -8,15 +8,15 @@ description: Promote merged work from the base branch to production and deploy i
 The last checkpoint before users are affected. Everything earlier is revertible with a `git revert`;
 this is where mistakes reach real people and real data. Bias toward stopping.
 
-Read `.claude/devflow.md` — base branch, production branch, deploy pipeline, health check, and the
-gitignored local file holding connection details.
+Read `.claude/devflow.md` — base branch, production branch, deploy pipeline, health check — and
+**`.claude/deploy-config.json`** (gitignored) for the connection details.
 
 ## 1. The QA gate — always ask
 
 Summarise what's pending from `docs/qa/pending-qa.md`, then ask:
 
 > "N changes merged and undeployed, M not yet QA'd: `#12 publish flow`, `#15 image picker`.
-> Two are marked *cannot be automated* (live LinkedIn publish, cross-tenant check).
+> Two are marked *cannot be automated* (a live third-party publish, a cross-tenant check).
 > Run QA first? (yes / no / show me)"
 
 Ask **every promotion** — not once per session, not "if it seems needed".
@@ -67,9 +67,13 @@ Follow the profile's pipeline. Regardless of specifics:
 - Report: what promoted, what deployed, health result, issues closed, and **whether QA ran**.
 
 ## Secrets
-Connection details live in the profile's **gitignored local file**. Never in a tracked file, an
-issue, a commit message, or the transcript. Never rotate, echo, or "just check" a value — if one is
-missing, name the variable and stop. A secret found committed is an incident: stop and say so.
+Connection details live in **`.claude/deploy-config.json`** (**gitignored**) — host, user, key
+**path**, deploy script, health URL, backup + rollback. Read it; never print it, never put it in a
+tracked file, an issue, a commit message, or the transcript.
+
+That file holds **paths and names only**. A key, password, or token *inside* it is a
+misconfiguration — say so rather than using it. Never rotate, echo, or "just check" a value; if one
+is missing, name the field and stop. A secret found committed is an incident: stop and say so.
 
 ## Delegation
 Spawn the **`devops`** agent. It owns promotion, deploy, health, rollback, and issue closing.
